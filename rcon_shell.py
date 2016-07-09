@@ -29,6 +29,10 @@ def parse_arguments():
         "--password",
         help="rcon password"
     )
+    parser.add_argument(
+        "--command",
+        help="command to send to the server"
+    )
     return parser.parse_args()
 
 
@@ -58,9 +62,12 @@ def rcon_shell(rcon):
         command = get_input("rcon> ")
         if command in ["quit", "q"]:
             return
-        response, response_id = rcon.send(command)
-        if response:
-            print(multiple_replace(color_map, response.decode('UTF-8')))
+        print_command_response(rcon, command)
+
+def print_command_response(rcon, command):
+    response, response_id = rcon.send(command)
+    if response:
+        print(multiple_replace(color_map, response.decode('UTF-8')))
 
 color_map = {'§0': '\033[30m',
 '§1': '\033[34m',
@@ -109,7 +116,10 @@ def main():
             options.port,
             password
         )
-        rcon_shell(rcon)
+        if options.command:
+            print_command_response(rcon, options.command)
+        else:
+            rcon_shell(rcon)
     except ConnectionError:
         print("Connection failed.")
         exit(1)
