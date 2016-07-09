@@ -1,7 +1,7 @@
 from api.rcon import RemoteConsole, AuthenticationError, ConnectionError
 from argparse import ArgumentParser
 from getpass import getpass
-import six
+import six, colorama, re
 
 """
 Minecraft RCON Client Console
@@ -60,8 +60,36 @@ def rcon_shell(rcon):
             return
         response, response_id = rcon.send(command)
         if response:
-            print(response.decode('UTF-8'))
+            print(multiple_replace(color_map, response.decode('UTF-8')))
 
+color_map = {'§0': '\033[30m',
+'§1': '\033[34m',
+'§2': '\033[32m',
+'§3': '\033[34m',
+'§4': '\033[31m',
+'§5': '\033[35m',
+'§6': '\033[33m',
+'§7': '\033[37m',
+'§8': '\033[37m',
+'§9': '\033[34m',
+'§a': '\033[32m',
+'§b': '\033[34m',
+'§c': '\033[31m',
+'§d': '\033[35m',
+'§e': '\033[33m',
+'§f': '\033[37m'
+}
+
+def multiple_replace(dict, text):
+
+  """ Replace in 'text' all occurences of any key in the given
+  dictionary by its corresponding value.  Returns the new tring."""
+
+  # Create a regular expression  from the dictionary keys
+  regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
+
+  # For each match, look-up corresponding value in dictionary
+  return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text) + '\033[0m'
 
 def main():
     """ Reads command-line arguments, connects to the RCON server, and starts
