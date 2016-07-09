@@ -25,6 +25,10 @@ def parse_arguments():
         default=25575,
         help="default: 25575"
     )
+    parser.add_argument(
+        "--password",
+        help="rcon password"
+    )
     return parser.parse_args()
 
 
@@ -69,7 +73,10 @@ def main():
     options = parse_arguments()
     rcon = None
     print("Connecting to %s:%d..." % (options.host, options.port))
-    password = getpass()
+    if options.password:
+        password = options.password
+    else:
+        password = getpass()
     try:
         rcon = RemoteConsole(
             options.host,
