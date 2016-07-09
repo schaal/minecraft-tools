@@ -60,9 +60,7 @@ def rcon_shell(rcon):
             return
         response, response_id = rcon.send(command)
         if response:
-            if command.startswith("help"):
-                response = response.replace("/", "\n/")
-            print(response)
+            print(response.decode('UTF-8'))
 
 
 def main():
