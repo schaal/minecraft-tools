@@ -1,7 +1,7 @@
 from api.rcon import RemoteConsole, AuthenticationError, ConnectionError
 from argparse import ArgumentParser
 from getpass import getpass
-import six, colorama, re
+import six, re
 
 """
 Minecraft RCON Client Console
@@ -103,6 +103,13 @@ def main():
     the rcon_shell loop. Handles exceptions and interrupts, and disconnects
     when finished.
     """
+
+    try:
+        import colorama
+        colorama.init()
+    except ImportError as e:
+        pass
+
     options = parse_arguments()
     rcon = None
     print("Connecting to %s:%d..." % (options.host, options.port))
@@ -126,6 +133,8 @@ def main():
     except AuthenticationError:
         print("Authentication failed.")
     except KeyboardInterrupt:
+        print('')
+    except EOFError:
         print('')
     finally:
         if rcon:
